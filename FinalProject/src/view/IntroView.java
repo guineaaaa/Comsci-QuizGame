@@ -109,10 +109,11 @@ public class IntroView extends JFrame implements ActionListener {
             showSignUpView();
         }
     }
+    /*
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
             new IntroView().setVisible(true);
         });
-    }
+    }*/
 
 }
