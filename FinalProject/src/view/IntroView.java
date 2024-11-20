@@ -16,7 +16,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 public class IntroView extends JFrame implements ActionListener {
-    private JPanel panel;
+    private JPanel mainPanel;
     private JButton loginBtn, signUpBtn;
     
     private LoginView loginView;
@@ -27,20 +27,20 @@ public class IntroView extends JFrame implements ActionListener {
         setSize(700, 800);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        // 커스텀 배경 패널 설정
-        panel = new BackgroundPanel();
-        panel.setLayout(new BorderLayout());
+        // 메인 패널 설정
+        mainPanel = new BackgroundPanel();
+        mainPanel.setLayout(new BorderLayout());
         
         // 버튼을 세로로 정렬하기 위한 패널
         JPanel buttonPanel = new JPanel();
         buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.Y_AXIS));
-        buttonPanel.setOpaque(false); // 버튼 패널을 투명하게 설정하여 배경이 보이게 함
+        buttonPanel.setOpaque(false);
 
         // 로그인 버튼 이미지 설정
         loginBtn = new JButton(new ImageIcon("src/images/loginBtn.png"));
         loginBtn.setAlignmentX(Component.CENTER_ALIGNMENT);
-        loginBtn.setContentAreaFilled(false); // 배경 제거
-        loginBtn.setBorderPainted(false); // 테두리 제거
+        loginBtn.setContentAreaFilled(false);
+        loginBtn.setBorderPainted(false);
         loginBtn.addActionListener(this);
         
         // 회원가입 버튼 이미지 설정
@@ -52,66 +52,57 @@ public class IntroView extends JFrame implements ActionListener {
 
         // 버튼을 버튼 패널에 추가
         buttonPanel.add(loginBtn);
-        buttonPanel.add(Box.createRigidArea(new Dimension(0, 10))); // 버튼 사이 간격
+        buttonPanel.add(Box.createRigidArea(new Dimension(0, 10))); 
         buttonPanel.add(signUpBtn);
 
         // 버튼 패널을 메인 패널의 아래쪽에 추가
-        panel.add(buttonPanel, BorderLayout.SOUTH);
+        mainPanel.add(buttonPanel, BorderLayout.SOUTH);
         
         // 메인 패널을 프레임에 추가
-        add(panel);
-        
-        // 로그인 뷰와 회원가입 뷰를 생성
-        loginView=new LoginView();
-        signupView=new SignupView();
-        
+        add(mainPanel);
+
+        // 로그인 뷰와 회원가입 뷰를 생성 (초기화)
+        loginView = new LoginView();
+        signupView = new SignupView();
     }
-
+    
     // 배경 이미지를 위한 커스텀 JPanel 클래스
-    class BackgroundPanel extends JPanel {
-        private Image backgroundImage;
-        public BackgroundPanel() {
-            // 배경 이미지 로드
-            backgroundImage = new ImageIcon("src/images/welcome.png").getImage();
-        }
-
+    class BackgroundPanel extends JPanel{
+    	private Image backgroundImage;
+    	public BackgroundPanel() {
+    		backgroundImage = new ImageIcon("src/images/welcome.png").getImage();
+    	}
         @Override
         protected void paintComponent(Graphics g) {
             super.paintComponent(g);
             g.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), this); // 패널 크기에 맞게 이미지 그리기
         }
     }
-    
-    // 로그인 화면 전환 메서드
+
+    // 로그인 화면 전환 메서드 (패널 전환)
     private void showLoginView() {
-    	// IntroView 숨기기
-        this.setVisible(false);
-        // 로그인 화면 JFrame 보이기
-        LoginView loginFrame = new LoginView();
-        loginFrame.setVisible(true);
-        loginFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        mainPanel.removeAll(); // 기존 패널을 제거
+        mainPanel.add(loginView); // 로그인 패널 추가
+        mainPanel.revalidate(); // 레이아웃 갱신
+        mainPanel.repaint();
     }
 
-    // 회원가입 화면 전환 메서드
+    // 회원가입 화면 전환 메서드 (패널 전환)
     private void showSignUpView() {
-        // IntroView 숨기기
-        this.setVisible(false);
-        // 회원가입 화면 JFrame 보이기
-        SignupView signupFrame = new SignupView();
-        signupFrame.setVisible(true);
-        signupFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        mainPanel.removeAll(); // 기존 패널을 제거
+        mainPanel.add(signupView); // 회원가입 패널 추가
+        mainPanel.revalidate(); // 레이아웃 갱신
+        mainPanel.repaint();
     }
 
     // 버튼 클릭 이벤트 처리
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == loginBtn) {
-            System.out.println("로그인 버튼 클릭");
             showLoginView(); 
         } else if (e.getSource() == signUpBtn) {
-            System.out.println("회원가입 버튼 클릭");
             showSignUpView();
         }
     }
-
 }
+
