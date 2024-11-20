@@ -14,7 +14,6 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
 
 public class IntroView extends JFrame implements ActionListener {
     private JPanel panel;
@@ -82,25 +81,30 @@ public class IntroView extends JFrame implements ActionListener {
             g.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), this); // 패널 크기에 맞게 이미지 그리기
         }
     }
+    
     // 로그인 화면 전환 메서드
     private void showLoginView() {
-        getContentPane().removeAll();  // 기존의 모든 컴포넌트 제거
-        getContentPane().add(loginView);  // 로그인 화면 추가
-        revalidate();  // 레이아웃 갱신
-        repaint();  // 화면 갱신
+    	// IntroView 숨기기
+        this.setVisible(false);
+        // 로그인 화면 JFrame 보이기
+        LoginView loginFrame = new LoginView();
+        loginFrame.setVisible(true);
+        loginFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
 
     // 회원가입 화면 전환 메서드
     private void showSignUpView() {
-        getContentPane().removeAll();  // 기존의 모든 컴포넌트 제거
-        getContentPane().add(signupView);  // 회원가입 화면 추가
-        revalidate();  // 레이아웃 갱신
-        repaint();  // 화면 갱신
+        // IntroView 숨기기
+        this.setVisible(false);
+        // 회원가입 화면 JFrame 보이기
+        SignupView signupFrame = new SignupView();
+        signupFrame.setVisible(true);
+        signupFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
 
+    // 버튼 클릭 이벤트 처리
     @Override
     public void actionPerformed(ActionEvent e) {
-        // 버튼 클릭 처리
         if (e.getSource() == loginBtn) {
             System.out.println("로그인 버튼 클릭");
             showLoginView(); 
@@ -109,11 +113,5 @@ public class IntroView extends JFrame implements ActionListener {
             showSignUpView();
         }
     }
-    /*
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            new IntroView().setVisible(true);
-        });
-    }*/
 
 }
