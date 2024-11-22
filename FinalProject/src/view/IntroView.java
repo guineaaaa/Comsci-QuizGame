@@ -21,6 +21,7 @@ public class IntroView extends JFrame implements ActionListener {
     
     private LoginView loginView;
     private SignupView signupView;
+    private MyPageView mypageView;
 
     public IntroView() {
         setTitle("Code&Conquer");
@@ -64,6 +65,7 @@ public class IntroView extends JFrame implements ActionListener {
         // 로그인 뷰와 회원가입 뷰를 생성 (초기화)
         loginView = new LoginView();
         signupView = new SignupView();
+      
     }
     
     // 배경 이미지를 위한 커스텀 JPanel 클래스
@@ -80,7 +82,7 @@ public class IntroView extends JFrame implements ActionListener {
     }
 
     // 로그인 화면 전환 메서드 (패널 전환)
-    private void showLoginView() {
+    public void showLoginView() {
         mainPanel.removeAll(); // 기존 패널을 제거
         mainPanel.add(loginView); // 로그인 패널 추가
         mainPanel.revalidate(); // 레이아웃 갱신
@@ -91,6 +93,15 @@ public class IntroView extends JFrame implements ActionListener {
     private void showSignUpView() {
         mainPanel.removeAll(); // 기존 패널을 제거
         mainPanel.add(signupView); // 회원가입 패널 추가
+        mainPanel.revalidate(); // 레이아웃 갱신
+        mainPanel.repaint();
+    }
+    
+    // Mypage 화면 전환 메서드
+    public void showMyPageView(String userId, String nickname) {
+    	mainPanel.removeAll(); // 기존 패널 제거
+    	mypageView = new MyPageView(userId, nickname,mainPanel);
+    	mainPanel.add(mypageView); //MyPage 패널 추가
         mainPanel.revalidate(); // 레이아웃 갱신
         mainPanel.repaint();
     }

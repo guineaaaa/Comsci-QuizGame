@@ -13,9 +13,9 @@ import java.sql.SQLException;
 
 public class UserRepository {
 	// 회원가입 로직
-    public boolean saveUser(String username, String password) {
+    public boolean saveUser(String username, String password, String nickname) {
         Connection conn = DatabaseConfig.getConnection();
-        String query = "INSERT INTO user (id, password) VALUES (?, ?)";
+        String query = "INSERT INTO user (id, password, nickname) VALUES (?, ?,?)";
 
         try {
             // 중복 체크
@@ -26,6 +26,7 @@ public class UserRepository {
             PreparedStatement pstmt = conn.prepareStatement(query);
             pstmt.setString(1, username);
             pstmt.setString(2, password);
+            pstmt.setString(3,  nickname);
             pstmt.executeUpdate();
             return true;
         } catch (SQLException e) {
@@ -48,6 +49,22 @@ public class UserRepository {
 			return true;
 		}
 	}
+    
+    public String getUserNickname(String username) {
+    	Connection conn = DatabaseConfig.getConnection();
+        String query = "SELECT nickname FROM user WHERE id = ?";
+        
+        try (PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setString(1, username);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return rs.getString("nickname"); // 닉네임 반환
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null; // 닉네임이 없거나 에러가 발생한 경우
+    }
     
     // 로그인 로직
     public boolean loginUser(String username, String password) {
