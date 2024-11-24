@@ -7,8 +7,9 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+
+import model.User;
 
 public class MyPageView extends JPanel implements ActionListener {
     private JLabel userIdLabel, nicknameLabel; // 사용자 ID와 닉네임 라벨
@@ -17,8 +18,10 @@ public class MyPageView extends JPanel implements ActionListener {
     private JButton startGameButton;   // 게임 시작 버튼
 
     private JPanel mainPanel; // 전환 대상이 되는 부모 패널 (MainView에서 전달)
-
-    public MyPageView(String userId, String nickname, JPanel mainPanel) {
+    private User currentUser; // User 객체 추가
+    
+    public MyPageView(User currentUser, JPanel mainPanel) {
+        this.currentUser = currentUser; // User 객체 저장
         this.mainPanel = mainPanel; // 부모 패널을 저장
 
         setLayout(new BorderLayout()); // BorderLayout 사용
@@ -34,8 +37,8 @@ public class MyPageView extends JPanel implements ActionListener {
 
         // 중앙 패널 설정 (사용자 정보 표시)
         JPanel centerPanel = new JPanel();
-        userIdLabel = new JLabel("사용자 ID: " + userId);
-        nicknameLabel = new JLabel("사용자 별명: " + nickname);
+        userIdLabel = new JLabel("사용자 ID: " + currentUser.getUsername()); // User 객체 사용
+        nicknameLabel = new JLabel("사용자 별명: " + currentUser.getNickname()); // User 객체 사용
         centerPanel.add(userIdLabel);
         centerPanel.add(nicknameLabel);
 
@@ -50,7 +53,6 @@ public class MyPageView extends JPanel implements ActionListener {
         add(centerPanel, BorderLayout.CENTER);  // 중앙 패널
         add(bottomPanel, BorderLayout.SOUTH);  // 하단 패널
     }
-
 
     // 진행 현황 화면 전환 메서드
     private void showProgressView() {
@@ -69,9 +71,9 @@ public class MyPageView extends JPanel implements ActionListener {
     }
 
     // 게임 시작 화면 전환 메서드
-    private void startGame() {
+    private void startGame(User currentUser) {
         mainPanel.removeAll(); // 기존 패널 제거
-        mainPanel.add(new CategoryView(mainPanel)); // 게임 카테고리 화면 추가
+        mainPanel.add(new CategoryView(mainPanel, currentUser)); // 게임 카테고리 화면 추가
         mainPanel.revalidate(); // 레이아웃 갱신
         mainPanel.repaint();
     }
@@ -84,7 +86,7 @@ public class MyPageView extends JPanel implements ActionListener {
         } else if (e.getSource() == storeButton) {
             showStoreView();
         } else if (e.getSource() == startGameButton) {
-            startGame();
+            startGame(currentUser);
         }
     }
 }

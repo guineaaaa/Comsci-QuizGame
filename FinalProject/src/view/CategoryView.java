@@ -9,14 +9,20 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import model.User;
+
 public class CategoryView extends JPanel implements ActionListener{
 	private JPanel mainPanel;
 	private JLabel categoryNameLabel;
 	private JButton cat1,cat2,cat3,cat4;
+	private User currentUser;
 	
-	public CategoryView(JPanel mainPanel) {
+	public CategoryView(JPanel mainPanel,User currentUser) {
 		this.mainPanel=mainPanel;
+		this.currentUser=currentUser;
 		setLayout(new BorderLayout());
+		
+		System.out.println("카테고리 유저 객체 전달 디버깅"+currentUser.getNickname());
 		
 		// 상단 라벨 패널 설정 (카테고리 이름 표시)
 		JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
@@ -52,12 +58,12 @@ public class CategoryView extends JPanel implements ActionListener{
         }
 
         // 카테고리 선택 후 DifficultyView로 전환
-        showDifficultyView(selectedCategory);
+        showDifficultyView(selectedCategory, currentUser);
     }
     
-    private void showDifficultyView(String category) {
+    private void showDifficultyView(String category, User currentUser) {
         mainPanel.removeAll(); // 기존 패널 제거
-        mainPanel.add(new DifficultyView(mainPanel, category)); // 선택된 카테고리로 DifficultyView 추가
+        mainPanel.add(new DifficultyView(mainPanel, category,currentUser)); // 선택된 카테고리로 DifficultyView 추가
         mainPanel.revalidate(); // 레이아웃 갱신
         mainPanel.repaint();
     }

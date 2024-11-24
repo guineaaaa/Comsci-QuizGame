@@ -4,12 +4,13 @@
  */
 package repository;
 
-import config.DatabaseConfig;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+
+import config.DatabaseConfig;
+import model.User;
 
 public class UserRepository {
 	// 회원가입 로직
@@ -82,9 +83,64 @@ public class UserRepository {
         	e.printStackTrace();
         	return false; //
         }
-        
-
-        
     }
-
+    
+    // 현재 로그인된 사용자 
+    public User getCurrentUser(String username) {
+    	Connection conn=DatabaseConfig.getConnection();
+    	String query="SELECT id, password, nickname, point FROM user WHERE id=?";
+    	
+    	try {
+    		PreparedStatement pstmt=conn.prepareStatement(query);
+    		pstmt.setString(1, username);
+    		ResultSet rs=pstmt.executeQuery();
+    		
+            if (rs.next()) {
+                String password = rs.getString("password");
+                String nickname = rs.getString("nickname");
+                int points = rs.getInt("point");
+                return new User(username, password,nickname, points); // User 객체 반환
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null; // 사용자 정보가 없으면 null 반환
+    }
+    
+    public void updateUserPoints(String username, int addedPoints) {
+        Connection conn = DatabaseConfig.getConnection();
+        String selectQuery = "SELECT point FROM user WHERE id=?";
+        String updateQuery = "UPDATE user SET point=? WHERE id=?";
+        
+        try {
+            // 1. 기존 포인트 조회
+            PreparedStatement selectStmt = conn.prepareStatement(selectQuery);
+            selectStmt.setString(1, username);
+            ResultSet rs = selectStmt.executeQuery();
+            
+            if (rs.next()) {
+                int currentPoints = rs.getInt("point"); // 기존 포인트 가져오기
+                int newPoints = currentPoints + addedPoints; // 새 점수 계산
+                
+                // 2. 새로운 포인트로 업데이트
+                PreparedStatement updateStmt = conn.prepareStatement(updateQuery);
+                updateStmt.setInt(1, newPoints);
+                updateStmt.setString(2, username);
+                updateStmt.executeUpdate();
+                
+                System.out.println(username + "의 점수가 " + newPoints + "로 업데이트되었습니다.");
+            } else {
+                System.out.println("사용자를 찾을 수 없습니다: " + username);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (conn != null) conn.close(); // 연결 닫기
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 }
+

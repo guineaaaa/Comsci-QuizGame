@@ -2,8 +2,8 @@ package controller;
 
 import javax.swing.JOptionPane;
 
+import model.User;
 import repository.UserRepository;
-import view.MyPageView;
 import view.IntroView;
 
 public class Controller {
@@ -38,9 +38,12 @@ public class Controller {
 
             String nickname = userRepository.getUserNickname(username);
             
+            // 로그인한 사용자의 정보를 가져온다.
+            User currentUser = userRepository.getCurrentUser(username);
+            
             // 로그인 성공 시 MyPage 화면으로 전환
             if (introView != null) {
-                introView.showMyPageView(username, nickname);
+                introView.showMyPageView(currentUser);
             }
         } else {
             System.out.println("로그인 실패");

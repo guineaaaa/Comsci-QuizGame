@@ -15,6 +15,8 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
+import model.User;
+
 public class IntroView extends JFrame implements ActionListener {
     private JPanel mainPanel;
     private JButton loginBtn, signUpBtn;
@@ -22,6 +24,8 @@ public class IntroView extends JFrame implements ActionListener {
     private LoginView loginView;
     private SignupView signupView;
     private MyPageView mypageView;
+    
+    private User currentUser;
 
     public IntroView() {
         setTitle("Code&Conquer");
@@ -98,9 +102,9 @@ public class IntroView extends JFrame implements ActionListener {
     }
     
     // Mypage 화면 전환 메서드
-    public void showMyPageView(String userId, String nickname) {
+    public void showMyPageView(User currentUser) {
     	mainPanel.removeAll(); // 기존 패널 제거
-    	mypageView = new MyPageView(userId, nickname,mainPanel);
+    	mypageView = new MyPageView(currentUser, mainPanel);
     	mainPanel.add(mypageView); //MyPage 패널 추가
         mainPanel.revalidate(); // 레이아웃 갱신
         mainPanel.repaint();
