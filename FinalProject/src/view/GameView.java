@@ -12,11 +12,11 @@ import java.util.TimerTask;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import model.Quiz; // Quiz 객체를 포함한 모델 클래스
 import model.User;
+import repository.UserRepository;
 
 public class GameView extends JPanel implements ActionListener {
     private JPanel mainPanel;
@@ -33,6 +33,7 @@ public class GameView extends JPanel implements ActionListener {
     public GameView(JPanel mainPanel, List<Quiz> questions,User currentUser) {
         this.mainPanel = mainPanel;
         this.questions = questions;
+        this.currentUser=currentUser;
         System.out.println("게임 진행 화면 유저 객체 전달 디버깅"+currentUser.getNickname());
 		
 
@@ -127,7 +128,7 @@ public class GameView extends JPanel implements ActionListener {
             } else if ("hard".equals(difficulty)) {
                 points += 4;
             }
-
+            
             // 점수 갱신 후 로그 추가
             System.out.println("점수 업데이트 후: " + points);
             pointsLabel.setText("점수: " + points);  // 점수 업데이트
@@ -177,7 +178,10 @@ public class GameView extends JPanel implements ActionListener {
         }
         System.out.println("게임오버뷰 화면 전환 전 디버깅"+currentUser.getNickname());
 
-        // GameOverView로 화면 전환하면서 currentUser 객체도 전달
+        
+        UserRepository userRepository = new UserRepository();
+        userRepository.updateUserPoints(currentUser.getUsername(), points);
+        
         mainPanel.removeAll();
         mainPanel.add(new GameOverView(mainPanel, points, currentUser));  // currentUser를 전달
         mainPanel.revalidate();

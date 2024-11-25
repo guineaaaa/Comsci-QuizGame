@@ -108,39 +108,25 @@ public class UserRepository {
     }
     
     public void updateUserPoints(String username, int addedPoints) {
-        Connection conn = DatabaseConfig.getConnection();
-        String selectQuery = "SELECT point FROM user WHERE id=?";
-        String updateQuery = "UPDATE user SET point=? WHERE id=?";
+        String query = "UPDATE user SET point = point + ? WHERE id = ?";
         
-        try {
-            // 1. 기존 포인트 조회
-            PreparedStatement selectStmt = conn.prepareStatement(selectQuery);
-            selectStmt.setString(1, username);
-            ResultSet rs = selectStmt.executeQuery();
+        try (Connection conn = DatabaseConfig.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(query)) {
             
-            if (rs.next()) {
-                int currentPoints = rs.getInt("point"); // 기존 포인트 가져오기
-                int newPoints = currentPoints + addedPoints; // 새 점수 계산
-                
-                // 2. 새로운 포인트로 업데이트
-                PreparedStatement updateStmt = conn.prepareStatement(updateQuery);
-                updateStmt.setInt(1, newPoints);
-                updateStmt.setString(2, username);
-                updateStmt.executeUpdate();
-                
-                System.out.println(username + "의 점수가 " + newPoints + "로 업데이트되었습니다.");
+            pstmt.setInt(1, addedPoints); // 추가될 점수
+            pstmt.setString(2, username); // 사용자 ID
+            int rowsUpdated = pstmt.executeUpdate(); // 업데이트 성공 여부 확인
+            
+            if (rowsUpdated > 0) {
+                System.out.println(username + "의 점수가 성공적으로 업데이트되었습니다.");
             } else {
                 System.out.println("사용자를 찾을 수 없습니다: " + username);
             }
         } catch (SQLException e) {
             e.printStackTrace();
-        } finally {
-            try {
-                if (conn != null) conn.close(); // 연결 닫기
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
         }
     }
+
+
 }
 
