@@ -5,6 +5,7 @@ import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -12,7 +13,7 @@ import javax.swing.JPanel;
 import model.User;
 
 public class MyPageView extends JPanel implements ActionListener {
-    private JLabel userIdLabel, nicknameLabel; // 사용자 ID와 닉네임 라벨
+    private JLabel userIdLabel, nicknameLabel,characterImageLabel; // 사용자 ID와 닉네임 라벨
     private JButton progressButton;    // 진행 현황 버튼
     private JButton storeButton;       // 상점 버튼
     private JButton startGameButton;   // 게임 시작 버튼
@@ -41,7 +42,14 @@ public class MyPageView extends JPanel implements ActionListener {
         nicknameLabel = new JLabel("사용자 별명: " + currentUser.getNickname()); // User 객체 사용
         centerPanel.add(userIdLabel);
         centerPanel.add(nicknameLabel);
-
+        
+        // 캐릭터 이미지
+        characterImageLabel = new JLabel();
+        ImageIcon characterIcon=new ImageIcon(getClass().getResource(currentUser.getCharacterImage()));
+        characterImageLabel.setIcon(characterIcon);
+       
+        centerPanel.add(characterImageLabel);
+        
         // 하단 버튼 패널 설정 (게임 시작 버튼)
         JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
         startGameButton = new JButton("게임 시작");
@@ -65,7 +73,7 @@ public class MyPageView extends JPanel implements ActionListener {
     // 상점 화면 전환 메서드
     private void showStoreView() {
         mainPanel.removeAll(); // 기존 패널 제거
-        mainPanel.add(new StoreView(mainPanel)); // 상점 패널 추가
+        mainPanel.add(new StoreView(mainPanel, currentUser)); // 상점 패널 추가
         mainPanel.revalidate(); // 레이아웃 갱신
         mainPanel.repaint();
     }

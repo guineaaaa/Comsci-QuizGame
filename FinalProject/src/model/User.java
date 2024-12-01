@@ -4,15 +4,20 @@ package model;
 public class User {
     private String username;
     private String password;
-    private int points; // 포인트 추가
     private String nickname;
+    private int points;
+    private String characterImage;
+    private int timeBoostItem;
+    private int lifeItem;
 
-    // 생성자
-    public User(String username, String password,String nickname, int points) {
-        this.username = username; //id
-        this.nickname=nickname;
+    public User(String username, String password, String nickname, int points, String characterImage, int timeBoostItem, int lifeItem) {
+        this.username = username;
         this.password = password;
-        this.points = points; // 포인트 초기화
+        this.nickname = nickname;
+        this.points = points;
+        this.characterImage = characterImage;
+        this.timeBoostItem = timeBoostItem;
+        this.lifeItem = lifeItem;
     }
 
     // Getter, Setter
@@ -48,5 +53,21 @@ public class User {
 
     public void setNickname(String nickname) {
         this.nickname = nickname;
+    }
+    
+    public String getCharacterImage() {
+        return characterImage;
+    }
+
+    public void setCharacterImage(String characterImage) {
+        this.characterImage = characterImage;
+    }
+    
+    public int getTimeBoostItem() {
+        return timeBoostItem;
+    }
+
+    public int getLifeItem() {
+        return lifeItem;
     }
 }

@@ -63,7 +63,7 @@ public class GameOverView extends JPanel implements ActionListener {
         mainPanel.revalidate();
         mainPanel.repaint();
 
-        updateUserPoints();
+       
     }
 
     private void restartGame() {
@@ -71,20 +71,6 @@ public class GameOverView extends JPanel implements ActionListener {
         mainPanel.add(new CategoryView(mainPanel, currentUser));
         mainPanel.revalidate();
         mainPanel.repaint();
-
-        updateUserPoints();
-    }
-
-    private void updateUserPoints() {
-        if (currentUser != null) {
-            UserRepository userRepository = new UserRepository();
-            int newScore = currentUser.getPoints() + totalScore;
-            userRepository.updateUserPoints(currentUser.getUsername(), newScore);
-
-            // 사용자 정보 업데이트
-            currentUser.setPoints(newScore);
-        } else {
-            System.out.println("사용자 정보를 찾을 수 없습니다.");
-        }
+      
     }
 }

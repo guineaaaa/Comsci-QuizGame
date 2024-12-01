@@ -17,12 +17,14 @@ import javax.swing.JPanel;
 import model.Quiz; // Quiz 객체를 포함한 모델 클래스
 import model.User;
 import repository.UserRepository;
+import repository.QuizRepository;  
 
 public class GameView extends JPanel implements ActionListener {
     private JPanel mainPanel;
     private List<Quiz> questions;
     private int currentQuestionIndex = 0;
-    private int lives = 5; private int points = 0;
+    private int lives = 5; 
+    private int points = 0;
     private int totalTime = 10 * 60; // 10분
     private User currentUser;
     
@@ -30,22 +32,23 @@ public class GameView extends JPanel implements ActionListener {
     private JLabel questionLabel, livesLabel, pointsLabel, timerLabel;
     private JButton option1Button, option2Button, option3Button;
 
-    public GameView(JPanel mainPanel, List<Quiz> questions,User currentUser) {
+    public GameView(JPanel mainPanel, List<Quiz> questions, User currentUser) {
         this.mainPanel = mainPanel;
         this.questions = questions;
-        this.currentUser=currentUser;
-        System.out.println("게임 진행 화면 유저 객체 전달 디버깅"+currentUser.getNickname());
-		
+        this.currentUser = currentUser;
+        System.out.println("게임 진행 화면 유저 객체 전달 디버깅: " + currentUser.getNickname());
 
         setLayout(new BorderLayout());
-        
+
         // 상단 패널: 목숨, 점수, 타이머 표시
         JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 10));
         livesLabel = new JLabel("목숨: " + lives);
         pointsLabel = new JLabel("점수: " + points);
         timerLabel = new JLabel("남은 시간: " + totalTime / 60 + "분 " + totalTime % 60 + "초");
-        topPanel.add(livesLabel); topPanel.add(pointsLabel); topPanel.add(timerLabel);
-        
+        topPanel.add(livesLabel); 
+        topPanel.add(pointsLabel); 
+        topPanel.add(timerLabel);
+
         // 중앙 패널: 문제 및 선택지 표시
         JPanel centerPanel = new JPanel(new GridLayout(4, 1, 10, 10));
         questionLabel = new JLabel("", JLabel.CENTER);
@@ -80,12 +83,11 @@ public class GameView extends JPanel implements ActionListener {
 
     private void loadQuestion() {
         if (currentQuestionIndex >= questions.size()) {
-        	showGameOverview();
+            showGameOverview();
             return;
         }
 
         Quiz question = questions.get(currentQuestionIndex);
-        // System.out.println("정답 확인: " + question.getCorrectOption());
         questionLabel.setText((currentQuestionIndex + 1) + ". " + question.getTitle());
         option1Button.setText(question.getOption1());
         option2Button.setText(question.getOption2());
@@ -116,27 +118,14 @@ public class GameView extends JPanel implements ActionListener {
 
         if (selectedOptionIndex == currentQuestion.getCorrectOption()) {
             System.out.println("정답 맞추었음");
-            String difficulty = currentQuestion.getDifficulty();
-            System.out.println("문제 난이도: " + difficulty);  
-            // 점수 갱신 전 로그 추가
-            System.out.println("점수 업데이트 전: " + points);
-
-            if ("easy".equals(difficulty)) {
-                points += 2;
-            } else if ("medium".equals(difficulty)) {
-                points += 3;
-            } else if ("hard".equals(difficulty)) {
-                points += 4;
-            }
-            
-            // 점수 갱신 후 로그 추가
-            System.out.println("점수 업데이트 후: " + points);
+            // 정답 시 2점 증가
+            points += 2;
             pointsLabel.setText("점수: " + points);  // 점수 업데이트
         } else {
             lives--;
             livesLabel.setText("목숨: " + lives);  // 목숨 업데이트
             if (lives <= 0) {
-            	showGameOverview();  // 목숨이 0 이하가 되면 게임 종료
+                showGameOverview();  // 목숨이 0 이하가 되면 게임 종료
                 return;
             }
         }
@@ -144,13 +133,14 @@ public class GameView extends JPanel implements ActionListener {
         // 레이아웃 갱신과 화면 다시 그리기
         revalidate();
         repaint();
+        // 푼 문제 기록
+        QuizRepository quizRepository = new QuizRepository();
+        quizRepository.markQuizAsCompleted(currentUser.getUsername(), currentQuestion.getQuizId());
         // 문제를 풀고 나서 다음 문제로 이동
         currentQuestionIndex++;
         loadQuestion();  // 새로운 문제 로드
     }
 
-
- 
     @Override
     public void actionPerformed(ActionEvent e) {
         int selectedOptionIndex = 0; // 초기화
@@ -176,16 +166,15 @@ public class GameView extends JPanel implements ActionListener {
         } else {
             message += "\n모든 문제를 완료했습니다!";
         }
-        System.out.println("게임오버뷰 화면 전환 전 디버깅"+currentUser.getNickname());
+        System.out.println("게임오버뷰 화면 전환 전 디버깅: " + currentUser.getNickname());
 
-        
+        // 유저 점수 업데이트
         UserRepository userRepository = new UserRepository();
         userRepository.updateUserPoints(currentUser.getUsername(), points);
-        
+
         mainPanel.removeAll();
         mainPanel.add(new GameOverView(mainPanel, points, currentUser));  // currentUser를 전달
         mainPanel.revalidate();
         mainPanel.repaint();
     }
-
 }

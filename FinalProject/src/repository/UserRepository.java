@@ -87,25 +87,39 @@ public class UserRepository {
     
     // 현재 로그인된 사용자 
     public User getCurrentUser(String username) {
-    	Connection conn=DatabaseConfig.getConnection();
-    	String query="SELECT id, password, nickname, point FROM user WHERE id=?";
-    	
-    	try {
-    		PreparedStatement pstmt=conn.prepareStatement(query);
-    		pstmt.setString(1, username);
-    		ResultSet rs=pstmt.executeQuery();
-    		
+        Connection conn = DatabaseConfig.getConnection();
+        String query = "SELECT id, password, nickname, point, character_image, time_boost_item, life_item FROM user WHERE id=?";
+
+        try {
+            PreparedStatement pstmt = conn.prepareStatement(query);
+            pstmt.setString(1, username);  // You are passing the username as the 'id' in your query.
+            ResultSet rs = pstmt.executeQuery();
+
             if (rs.next()) {
+                String id = rs.getString("id"); // id는 문자열로 가져옵니다.
                 String password = rs.getString("password");
                 String nickname = rs.getString("nickname");
                 int points = rs.getInt("point");
-                return new User(username, password,nickname, points); // User 객체 반환
+                String characterImage = rs.getString("character_image");
+
+                if (characterImage == null || characterImage.isEmpty()) {
+                    characterImage = "/images/character.png";
+                }
+
+                // time_boost_item과 life_item을 추가로 처리합니다.
+                int timeBoostItem = rs.getInt("time_boost_item");
+                int lifeItem = rs.getInt("life_item");
+
+                return new User(id, password, nickname, points, characterImage, timeBoostItem, lifeItem);  // User 객체에 추가 필드 전달
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return null; // 사용자 정보가 없으면 null 반환
+        return null; // Always returns null if the user is not found
     }
+
+
+
     
     public void updateUserPoints(String username, int addedPoints) {
         String query = "UPDATE user SET point = point + ? WHERE id = ?";
