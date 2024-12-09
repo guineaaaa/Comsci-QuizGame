@@ -1,6 +1,6 @@
 package model;
 
-public class Item {
+public class Item{
 	private int itemId;
 	private String name;
 	private String type;
@@ -13,20 +13,19 @@ public class Item {
 		this.price=price;
 	}
 	
-    public int getItemId() {
-        return itemId;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public int getPrice() {
-        return price;
-    }
-
+	public int getItemId() {
+		return itemId;
+	}
+	
+	public String getName() {
+		return name;
+	}
+	
+	public String getType() {
+		return type;
+	}
+	
+	public int getPrice() {
+		return price;
+	}
 }

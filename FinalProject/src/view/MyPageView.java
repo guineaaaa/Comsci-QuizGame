@@ -97,4 +97,5 @@ public class MyPageView extends JPanel implements ActionListener {
             startGame(currentUser);
         }
     }
+    
 }

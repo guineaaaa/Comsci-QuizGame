@@ -1,6 +1,7 @@
 package view;
 
 import java.awt.BorderLayout;
+import java.awt.Image;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -17,5 +18,7 @@ public class ProgressView extends JPanel {
         progressLabel.setHorizontalAlignment(JLabel.CENTER);
         add(progressLabel, BorderLayout.CENTER);
 	}
+	
+	
 
 }

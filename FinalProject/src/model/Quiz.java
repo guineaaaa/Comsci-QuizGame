@@ -2,6 +2,7 @@ package model;
 
 public class Quiz {
     private int quizId;
+    private int categoryId;
     private String questionText;
     private String option1;
     private String option2;
@@ -18,6 +19,14 @@ public class Quiz {
         this.quizId = quizId;
     }
 
+    public int getCategoryId() {
+        return categoryId;
+    }
+
+    public void setCategoryId(int categoryId) {
+        this.categoryId = categoryId;
+    }
+    
     public String getQuestionText() {
         return questionText;
     }

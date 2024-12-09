@@ -1,26 +1,19 @@
 package view;
 
-import java.awt.BorderLayout;
-import java.awt.FlowLayout;
-import java.awt.GridLayout;
-import java.util.List;
-
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.SwingConstants;
-
 import model.Item;
 import model.User;
 import repository.StoreRepository;
 
+import javax.swing.*;
+import java.awt.*;
+import java.util.List;
+
 public class StoreView extends JPanel {
-    private JPanel mainPanel;
-    private User currentUser;
-    private StoreRepository storeRepository;
+    private final StoreRepository storeRepository;
+    private final User currentUser;
+    private final JPanel mainPanel;
     private JLabel characterImageLabel;
+    private JLabel pointsLabel; // 포인트를 표시할 라벨 추가
 
     public StoreView(JPanel mainPanel, User currentUser) {
         this.mainPanel = mainPanel;
@@ -28,112 +21,107 @@ public class StoreView extends JPanel {
         this.storeRepository = new StoreRepository();
 
         setLayout(new BorderLayout());
-        initUI();
-    }
 
-    private void initUI() {
-        // 상단 패널: 목숨 아이템과 시간 추가 아이템 구매 버튼
-        JPanel topPanel = new JPanel();
-        topPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
-
-        // 가격 정보와 함께 버튼 추가
-        int lifeItemPrice = getItemPriceByName("목숨 +1");
-        int timeBoostItemPrice = getItemPriceByName("시간 +30초");
-
-        JButton buyLifeButton = new JButton("목숨 +1 아이템 구매 (" + lifeItemPrice + " 포인트)");
-        JButton buyTimeBoostButton = new JButton("시간 +30초 아이템 구매 (" + timeBoostItemPrice + " 포인트)");
-        JLabel pointsLabel = new JLabel("포인트: " + currentUser.getPoints());
-
-        buyLifeButton.addActionListener(e -> purchaseLifeItem(pointsLabel));
-        buyTimeBoostButton.addActionListener(e -> purchaseTimeBoostItem(pointsLabel));
-
-        topPanel.add(buyLifeButton);
-        topPanel.add(buyTimeBoostButton);
-        topPanel.add(pointsLabel);
-        add(topPanel, BorderLayout.NORTH);
-
-        // 중앙 패널: 현재 캐릭터 이미지
-        JPanel centerPanel = new JPanel();
-        centerPanel.setLayout(new BorderLayout());
+        // 상단 패널: 캐릭터 이미지 및 포인트 정보
+        JPanel topPanel = new JPanel(new BorderLayout());
+        
+        // 캐릭터 이미지 라벨
         characterImageLabel = new JLabel();
-        ImageIcon characterIcon = new ImageIcon(getClass().getResource(currentUser.getCharacterImage()));
-        characterImageLabel.setIcon(characterIcon);
-        centerPanel.add(characterImageLabel);
-        add(centerPanel, BorderLayout.CENTER);
+        characterImageLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        updateCharacterImage(); // 캐릭터 이미지 로드
+        topPanel.add(characterImageLabel, BorderLayout.CENTER);
 
-        // 오른쪽 패널: 액세서리 아이템 목록
-        JPanel rightPanel = new JPanel();
-        rightPanel.setLayout(new GridLayout(2, 1, 10, 10));
+        // 포인트 정보 라벨
+        pointsLabel = new JLabel("포인트: " + currentUser.getPoints());
+        // pointsLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        topPanel.add(pointsLabel, BorderLayout.NORTH);
 
-        // Get all items from the repository
-        List<Item> allItems = storeRepository.getItems();
+        JLabel titleLabel = new JLabel("상점");
+        // titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        topPanel.add(titleLabel, BorderLayout.SOUTH);
 
-        // Filter accessory items
-        for (Item item : allItems) {
-            if ("accessory".equals(item.getType())) {
-                JButton itemButton = new JButton(item.getName() + " (" + item.getPrice() + " 포인트)");
-                itemButton.addActionListener(e -> purchaseAccessoryItem(item, pointsLabel, characterImageLabel));
-                rightPanel.add(itemButton);
+        // 아이템 목록 패널
+        JPanel itemPanel = new JPanel();
+        itemPanel.setLayout(new GridLayout(0, 1, 10, 10));
+        List<Item> items = storeRepository.getItems();
+        for (Item item : items) {
+            JPanel itemRow = new JPanel(new FlowLayout(FlowLayout.LEFT));
+            JLabel itemNameLabel = new JLabel(item.getName() + " (" + item.getPrice() + "원)");
+            JButton purchaseButton = new JButton("구매하기");
+            JButton wearButton = new JButton("착용하기");
+
+            wearButton.setEnabled(false); // 기본적으로 비활성화
+            if (storeRepository.isItemOwned(currentUser.getUsername(), item.getItemId())) {
+                purchaseButton.setEnabled(false); // 이미 구매한 아이템은 비활성화
+                if ("accessory".equals(item.getType())) {
+                    wearButton.setEnabled(true); // 착용 버튼 활성화
+                }
             }
+
+            // 구매 버튼 클릭
+            purchaseButton.addActionListener(e -> {
+                boolean success = storeRepository.purchaseItem(currentUser.getUsername(), item.getItemId());
+                if (success) {
+                    JOptionPane.showMessageDialog(StoreView.this, "구매 성공!");
+                    currentUser.setPoints(currentUser.getPoints() - item.getPrice()); // 포인트 차감
+                    updatePointsLabel(); // 포인트 갱신
+                    purchaseButton.setEnabled(false);
+                    if ("accessory".equals(item.getType())) {
+                        wearButton.setEnabled(true);
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(StoreView.this, "구매 실패: 포인트 부족 또는 이미 구매함.");
+                }
+            });
+
+            // 착용 버튼 클릭
+            wearButton.addActionListener(e -> {
+                boolean success = storeRepository.updateCharacterImage(currentUser.getUsername(), item.getItemId());
+                if (success) {
+                    currentUser.setCharacterImage(storeRepository.getCharacterImagePath(currentUser.getUsername()));
+                    JOptionPane.showMessageDialog(StoreView.this, "착용 성공!");
+                    updateCharacterImage(); // 캐릭터 이미지 갱신
+                } else {
+                    JOptionPane.showMessageDialog(StoreView.this, "착용 실패.");
+                }
+            });
+
+            itemRow.add(itemNameLabel);
+            itemRow.add(purchaseButton);
+            if ("accessory".equals(item.getType())) {
+                itemRow.add(wearButton); // 악세사리에만 착용 버튼 추가
+            }
+            itemPanel.add(itemRow);
         }
 
-        add(rightPanel, BorderLayout.EAST);
+        // 하단 패널: 돌아가기 버튼
+        JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
+        JButton backButton = new JButton("돌아가기");
+        backButton.addActionListener(e -> showMyPageView());
+        bottomPanel.add(backButton);
+
+        add(topPanel, BorderLayout.NORTH);
+        add(new JScrollPane(itemPanel), BorderLayout.CENTER);
+        add(bottomPanel, BorderLayout.SOUTH);
     }
 
-    // 목숨 아이템 구매 처리
-    private void purchaseLifeItem(JLabel pointsLabel) {
-        int lifeItemPrice = getItemPriceByName("목숨 아이템");
-        boolean success = storeRepository.purchaseItem(currentUser.getUsername(), getItemIdByName("목숨 아이템"));
-        if (success) {
-            JOptionPane.showMessageDialog(this, "목숨 아이템을 구매했습니다!");
-            currentUser.setPoints(currentUser.getPoints() - lifeItemPrice);
-            pointsLabel.setText("포인트: " + currentUser.getPoints());
+    private void updateCharacterImage() {
+        String imagePath = storeRepository.getCharacterImagePath(currentUser.getUsername());
+        if (imagePath != null) {
+            characterImageLabel.setIcon(new ImageIcon(getClass().getResource(imagePath)));
         } else {
-            JOptionPane.showMessageDialog(this, "구매에 실패했습니다. 포인트를 확인하세요.");
+            characterImageLabel.setIcon(new ImageIcon(getClass().getResource("/images/character.png")));
         }
     }
 
-    // 시간 추가 아이템 구매 처리
-    private void purchaseTimeBoostItem(JLabel pointsLabel) {
-        int timeBoostItemPrice = getItemPriceByName("시간 추가 아이템");
-        boolean success = storeRepository.purchaseItem(currentUser.getUsername(), getItemIdByName("시간 추가 아이템"));
-        if (success) {
-            JOptionPane.showMessageDialog(this, "시간 추가 아이템을 구매했습니다!");
-            currentUser.setPoints(currentUser.getPoints() - timeBoostItemPrice);
-            pointsLabel.setText("포인트: " + currentUser.getPoints());
-        } else {
-            JOptionPane.showMessageDialog(this, "구매에 실패했습니다. 포인트를 확인하세요.");
-        }
+    private void updatePointsLabel() {
+        pointsLabel.setText("포인트: " + currentUser.getPoints());
     }
 
-    // 액세서리 아이템 구매 처리
-    private void purchaseAccessoryItem(Item item, JLabel pointsLabel, JLabel characterImageLabel) {
-        boolean success = storeRepository.purchaseItem(currentUser.getUsername(), item.getItemId());
-        if (success) {
-            JOptionPane.showMessageDialog(this, item.getName() + "를 구매했습니다!");
-            currentUser.setPoints(currentUser.getPoints() - item.getPrice());
-            pointsLabel.setText("포인트: " + currentUser.getPoints());
-            characterImageLabel.setIcon(new ImageIcon(storeRepository.getUpdatedCharacterImage(currentUser.getUsername())));
-        } else {
-            JOptionPane.showMessageDialog(this, "구매에 실패했습니다. 포인트를 확인하거나 이미 구매한 아이템인지 확인하세요.");
-        }
-    }
-
-    // 아이템 ID 가져오기 (간단한 매핑 메서드)
-    private int getItemIdByName(String itemName) {
-        return storeRepository.getItems().stream()
-                .filter(item -> item.getName().equals(itemName))
-                .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("해당 아이템을 찾을 수 없습니다."))
-                .getItemId();
-    }
-
-    // 아이템 가격 가져오기 (간단한 매핑 메서드)
-    private int getItemPriceByName(String itemName) {
-        return storeRepository.getItems().stream()
-                .filter(item -> item.getName().equals(itemName))
-                .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("해당 아이템을 찾을 수 없습니다."))
-                .getPrice();
+    private void showMyPageView() {
+        mainPanel.removeAll();
+        mainPanel.add(new MyPageView(currentUser, mainPanel));
+        mainPanel.revalidate();
+        mainPanel.repaint();
     }
 }

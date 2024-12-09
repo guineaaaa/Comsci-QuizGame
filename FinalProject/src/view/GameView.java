@@ -13,11 +13,12 @@ import java.util.TimerTask;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 
 import model.Quiz; // Quiz 객체를 포함한 모델 클래스
 import model.User;
-import repository.UserRepository;
-import repository.QuizRepository;  
+import repository.QuizRepository;
+import repository.UserRepository;  
 
 public class GameView extends JPanel implements ActionListener {
     private JPanel mainPanel;
@@ -113,33 +114,30 @@ public class GameView extends JPanel implements ActionListener {
     private void checkAnswer(int selectedOptionIndex) {
         Quiz currentQuestion = questions.get(currentQuestionIndex);
 
-        System.out.println("선택된 옵션: " + selectedOptionIndex);
-        System.out.println("정답 옵션: " + currentQuestion.getCorrectOption());
-
         if (selectedOptionIndex == currentQuestion.getCorrectOption()) {
-            System.out.println("정답 맞추었음");
-            // 정답 시 2점 증가
             points += 2;
-            pointsLabel.setText("점수: " + points);  // 점수 업데이트
+            SwingUtilities.invokeLater(() -> pointsLabel.setText("점수: " + points)); // UI 업데이트
         } else {
             lives--;
-            livesLabel.setText("목숨: " + lives);  // 목숨 업데이트
+            SwingUtilities.invokeLater(() -> livesLabel.setText("목숨: " + lives));
             if (lives <= 0) {
-                showGameOverview();  // 목숨이 0 이하가 되면 게임 종료
+                showGameOverview();
                 return;
             }
         }
 
-        // 레이아웃 갱신과 화면 다시 그리기
         revalidate();
         repaint();
+
         // 푼 문제 기록
         QuizRepository quizRepository = new QuizRepository();
-        quizRepository.markQuizAsCompleted(currentUser.getUsername(), currentQuestion.getQuizId());
-        // 문제를 풀고 나서 다음 문제로 이동
+        quizRepository.markQuizAsCompleted(currentUser.getUsername(), currentQuestion.getQuizId(), currentQuestion.getCategoryId());
+
+        // 다음 문제 로드
         currentQuestionIndex++;
-        loadQuestion();  // 새로운 문제 로드
+        loadQuestion();
     }
+
 
     @Override
     public void actionPerformed(ActionEvent e) {

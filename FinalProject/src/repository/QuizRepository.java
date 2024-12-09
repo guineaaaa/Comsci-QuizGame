@@ -3,13 +3,16 @@ package repository;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.ArrayList;
 import java.util.List;
-import model.Quiz;
+
 import config.DatabaseConfig; // DB 연결 유틸리티 클래스
+import model.Quiz;
 
 public class QuizRepository {
 
+    // 퀴즈 목록 가져오기 (이미 푼 문제는 제외)
     public List<Quiz> getQuestions(String userId, String categoryName) {
         List<Quiz> questions = new ArrayList<>();
         
@@ -48,18 +51,28 @@ public class QuizRepository {
 
         return questions;
     }
-    
-    public void markQuizAsCompleted(String userId, int quizId) {
-        String query = "INSERT INTO user_quiz (userId, quizId) VALUES (?, ?)";
+
+    // 퀴즈 완료 상태 저장
+    public void markQuizAsCompleted(String userId, int quizId, int categoryId) {
+        String query = """
+            INSERT INTO user_quiz (userId, quizId, categoryId)
+            VALUES (?, ?, ?)
+            ON DUPLICATE KEY UPDATE quizId = quizId;
+        """;
+
         try (Connection conn = DatabaseConfig.getConnection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
+
             stmt.setString(1, userId);
             stmt.setInt(2, quizId);
+            stmt.setInt(3, categoryId);
+
             stmt.executeUpdate();
+        } catch (SQLIntegrityConstraintViolationException e) {
+            System.out.println("이미 기록된 퀴즈: " + quizId);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
-
 
 }
