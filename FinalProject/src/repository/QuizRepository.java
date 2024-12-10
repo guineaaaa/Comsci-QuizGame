@@ -17,15 +17,17 @@ public class QuizRepository {
         List<Quiz> questions = new ArrayList<>();
         
         String query = """
-            SELECT q.quizId, q.title, q.option1, q.option2, q.option3, q.correct_option
-            FROM quiz q
-            INNER JOIN category c ON q.categoryId = c.categoryId
-            LEFT JOIN user_quiz uq ON q.quizId = uq.quizId AND uq.userId = ?
-            WHERE c.name = ? AND uq.quizId IS NULL
-            ORDER BY RAND()
-            LIMIT 10
-        """;
+                SELECT q.quizId, q.title, q.option1, q.option2, q.option3, q.correct_option, q.categoryId
+                FROM quiz q
+                LEFT JOIN user_quiz uq ON q.quizId = uq.quizId AND uq.userId = ?
+                WHERE uq.quizId IS NULL AND q.categoryId = (
+                    SELECT categoryId FROM category WHERE name = ?
+                )
+                ORDER BY RAND()
+                LIMIT 10;
+            """;
 
+        System.out.println("getQuestions 호출: userId=" + userId + ", categoryName=" + categoryName);
         try (Connection conn = DatabaseConfig.getConnection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
 
@@ -43,6 +45,7 @@ public class QuizRepository {
                 question.setOption2(rs.getString("option2"));
                 question.setOption3(rs.getString("option3"));
                 question.setCorrectOption(rs.getInt("correct_option"));
+                question.setCategoryId(rs.getInt("categoryId"));
                 questions.add(question);
             }
         } catch (Exception e) {
@@ -57,7 +60,7 @@ public class QuizRepository {
         String query = """
             INSERT INTO user_quiz (userId, quizId, categoryId)
             VALUES (?, ?, ?)
-            ON DUPLICATE KEY UPDATE quizId = quizId;
+            ON DUPLICATE KEY UPDATE categoryId = VALUES(categoryId);
         """;
 
         try (Connection conn = DatabaseConfig.getConnection();
@@ -67,12 +70,18 @@ public class QuizRepository {
             stmt.setInt(2, quizId);
             stmt.setInt(3, categoryId);
 
-            stmt.executeUpdate();
+            int rowsAffected = stmt.executeUpdate();
+            
+            System.out.println("markQuizAsCompleted 실행");
+            System.out.println("markQuizAsCompleted 호출: userId=" + userId + ", quizId=" + quizId + ", categoryId=" + categoryId);
+            
+
         } catch (SQLIntegrityConstraintViolationException e) {
             System.out.println("이미 기록된 퀴즈: " + quizId);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
+
 
 }

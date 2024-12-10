@@ -68,21 +68,15 @@ public class CategoryView extends JPanel implements ActionListener {
             selectedCategory = "운영체제";
         }
 
-        // 선택된 카테고리로 퀴즈 가져오기
-        List<Quiz> questions = fetchQuizQuestions(selectedCategory);
-
-        // 퀴즈와 카테고리 정보를 GameView로 전달
-        showGameView(selectedCategory, questions, currentUser);
+        showItemView(selectedCategory);
     }
 
-    private List<Quiz> fetchQuizQuestions(String categoryName) {
-        // 카테고리에 맞는 퀴즈를 QuizRepository에서 가져옴
-        return quizRepository.getQuestions(currentUser.getUsername(), categoryName);
-    }
 
-    private void showGameView(String category, List<Quiz> questions, User currentUser) {
-    	mainPanel.removeAll();
-    	mainPanel.add(new GameView(mainPanel, questions, currentUser));
+
+    
+    private void showItemView(String category) {
+        mainPanel.removeAll();
+        mainPanel.add(new ItemView(mainPanel, currentUser, category));
         mainPanel.revalidate();
         mainPanel.repaint();
     }

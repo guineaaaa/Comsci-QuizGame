@@ -66,8 +66,16 @@ public class User {
     public int getTimeBoostItem() {
         return timeBoostItem;
     }
+    
+    public void setTimeBoostItem(int timeBoostItem) {
+    	this.timeBoostItem=timeBoostItem;
+    }
 
     public int getLifeItem() {
         return lifeItem;
+    }
+    
+    public void setLifeItem(int lifeItem) {
+    	this.lifeItem=lifeItem;
     }
 }

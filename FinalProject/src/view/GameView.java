@@ -33,10 +33,12 @@ public class GameView extends JPanel implements ActionListener {
     private JLabel questionLabel, livesLabel, pointsLabel, timerLabel;
     private JButton option1Button, option2Button, option3Button;
 
-    public GameView(JPanel mainPanel, List<Quiz> questions, User currentUser) {
+    public GameView(JPanel mainPanel, List<Quiz> questions, User currentUser, int livesItem, int timeBoostItem) {
         this.mainPanel = mainPanel;
         this.questions = questions;
         this.currentUser = currentUser;
+        this.lives = 5 + livesItem; // 기본 목숨 + 아이템
+        this.totalTime = 10 * 60 + timeBoostItem * 30; // 기본 10분 + 아이템 시간 추가
         System.out.println("게임 진행 화면 유저 객체 전달 디버깅: " + currentUser.getNickname());
 
         setLayout(new BorderLayout());
@@ -112,11 +114,19 @@ public class GameView extends JPanel implements ActionListener {
     }
 
     private void checkAnswer(int selectedOptionIndex) {
+    	System.out.println("checkAnswer 호출됨. 선택된 옵션: " + selectedOptionIndex);
         Quiz currentQuestion = questions.get(currentQuestionIndex);
 
         if (selectedOptionIndex == currentQuestion.getCorrectOption()) {
             points += 2;
             SwingUtilities.invokeLater(() -> pointsLabel.setText("점수: " + points)); // UI 업데이트
+            QuizRepository quizRepository = new QuizRepository();
+            quizRepository.markQuizAsCompleted(
+                    currentUser.getUsername(),
+                    currentQuestion.getQuizId(),
+                    currentQuestion.getCategoryId()
+                );
+            System.out.println("markQuizAsCompleted 호출 완료.");
         } else {
             lives--;
             SwingUtilities.invokeLater(() -> livesLabel.setText("목숨: " + lives));
@@ -129,13 +139,12 @@ public class GameView extends JPanel implements ActionListener {
         revalidate();
         repaint();
 
-        // 푼 문제 기록
-        QuizRepository quizRepository = new QuizRepository();
-        quizRepository.markQuizAsCompleted(currentUser.getUsername(), currentQuestion.getQuizId(), currentQuestion.getCategoryId());
-
-        // 다음 문제 로드
+     
+           
         currentQuestionIndex++;
         loadQuestion();
+        
+        
     }
 
 
