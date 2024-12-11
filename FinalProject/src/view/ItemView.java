@@ -12,6 +12,7 @@ import javax.swing.JPanel;
 import model.Quiz;
 import model.User;
 import repository.QuizRepository;
+import repository.UserRepository;
 
 public class ItemView extends JPanel {
     private JPanel mainPanel;
@@ -25,8 +26,9 @@ public class ItemView extends JPanel {
     public ItemView(JPanel mainPanel, User currentUser, String selectedCategory) {
         this.mainPanel = mainPanel;
         this.currentUser = currentUser;
+        this.selectedCategory=selectedCategory;
 
-        // 유저의 아이템 상태 (예: 데이터베이스나 User 객체에서 가져올 수 있음)
+        // 유저의 아이템 상태 
         this.livesItemCount = currentUser.getLifeItem(); // 예: User 모델에서 가져오기
         this.timeItemCount = currentUser.getTimeBoostItem();   // 예: User 모델에서 가져오기
 
@@ -68,8 +70,11 @@ public class ItemView extends JPanel {
     private void useLivesItem() {
         if (livesItemCount > 0) {
             livesItemCount--;
-            currentUser.setLifeItem(currentUser.getLifeItem() + 1); // 유저 목숨 +1
+            currentUser.setLifeItem(livesItemCount); // 아이템 개수 업데이트
             livesItemLabel.setText("목숨 +1 아이템: " + livesItemCount + "개");
+            
+            // DB 업데이트 
+            new UserRepository().updateItemCount(currentUser.getUsername(), livesItemCount, currentUser.getTimeBoostItem());
             System.out.println("목숨 +1 아이템 사용됨. 남은 개수: " + livesItemCount);
         } else {
             System.out.println("아이템이 부족합니다.");
@@ -79,8 +84,10 @@ public class ItemView extends JPanel {
     private void useTimeItem() {
         if (timeItemCount > 0) {
             timeItemCount--;
-            currentUser.setTimeBoostItem(currentUser.getTimeBoostItem() + 30); // 게임 시간 +30초
+            currentUser.setTimeBoostItem(timeItemCount); // 아이템 개수 업데이트
             timeItemLabel.setText("30초 추가 아이템: " + timeItemCount + "개");
+            
+            new UserRepository().updateItemCount(currentUser.getUsername(), currentUser.getLifeItem(), timeItemCount);
             System.out.println("30초 추가 아이템 사용됨. 남은 개수: " + timeItemCount);
         } else {
             System.out.println("아이템이 부족합니다.");
@@ -95,6 +102,8 @@ public class ItemView extends JPanel {
     }
     
     private void startGame() {
+    	System.out.println("게임 시작 카테고리: " + selectedCategory);
+        // QuizRepository를 사용하여 퀴즈 문제를 가져오기
         List<Quiz> questions = new QuizRepository().getQuestions(currentUser.getUsername(), selectedCategory);
         mainPanel.removeAll();
         mainPanel.add(new GameView(mainPanel, questions, currentUser, livesItemCount, timeItemCount));

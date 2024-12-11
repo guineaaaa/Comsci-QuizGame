@@ -70,11 +70,9 @@ public class CategoryView extends JPanel implements ActionListener {
 
         showItemView(selectedCategory);
     }
-
-
-
     
     private void showItemView(String category) {
+    	 System.out.println("전달된 카테고리: " + category);
         mainPanel.removeAll();
         mainPanel.add(new ItemView(mainPanel, currentUser, category));
         mainPanel.revalidate();

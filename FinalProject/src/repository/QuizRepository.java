@@ -26,7 +26,8 @@ public class QuizRepository {
                 ORDER BY RAND()
                 LIMIT 10;
             """;
-
+        System.out.println("카테고리: " + categoryName + "에 해당하는 퀴즈 문제를 가져오는 중");
+        
         System.out.println("getQuestions 호출: userId=" + userId + ", categoryName=" + categoryName);
         try (Connection conn = DatabaseConfig.getConnection();
              PreparedStatement stmt = conn.prepareStatement(query)) {

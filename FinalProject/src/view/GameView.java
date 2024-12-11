@@ -85,6 +85,7 @@ public class GameView extends JPanel implements ActionListener {
     }
 
     private void loadQuestion() {
+    	System.out.println("문제 받아와짐");
         if (currentQuestionIndex >= questions.size()) {
             showGameOverview();
             return;

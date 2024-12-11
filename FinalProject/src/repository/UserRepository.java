@@ -115,10 +115,8 @@ public class UserRepository {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return null; // Always returns null if the user is not found
+        return null; 
     }
-
-
 
     
     public void updateUserPoints(String username, int addedPoints) {
@@ -140,6 +138,22 @@ public class UserRepository {
             e.printStackTrace();
         }
     }
+    
+    public void updateItemCount(String userId, int livesItem, int timeBoostItem) {
+        String query = "UPDATE user SET life_item = ?, time_boost_item = ? WHERE id = ?";
+
+        try (Connection conn = DatabaseConfig.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setInt(1, livesItem);  // 남은 목숨 아이템
+            stmt.setInt(2, timeBoostItem);  // 남은 시간 아이템
+            stmt.setString(3, userId);  // 사용자 ID
+
+            stmt.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    
 
 
 }
