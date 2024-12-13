@@ -1,24 +1,42 @@
 package view;
 
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.GridLayout;
+import java.util.List;
+
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.SwingConstants;
+
 import model.Item;
 import model.User;
 import repository.StoreRepository;
-
-import javax.swing.*;
-import java.awt.*;
-import java.util.List;
+import repository.UserRepository;
 
 public class StoreView extends JPanel {
     private final StoreRepository storeRepository;
     private final User currentUser;
     private final JPanel mainPanel;
     private JLabel characterImageLabel;
-    private JLabel pointsLabel; // 포인트를 표시할 라벨 추가
+    private JLabel pointsLabel;
+    private JLabel livesItemLabel, timeItemLabel;
+
+    private int livesItemCount; // 목숨 +1 아이템 개수
+    private int timeItemCount;  // 30초 추가 아이템 개수
 
     public StoreView(JPanel mainPanel, User currentUser) {
         this.mainPanel = mainPanel;
         this.currentUser = currentUser;
         this.storeRepository = new StoreRepository();
+
+        // 최신 상태로 아이템 개수 갱신
+        updateItemCounts();
 
         setLayout(new BorderLayout());
 
@@ -31,14 +49,20 @@ public class StoreView extends JPanel {
         updateCharacterImage(); // 캐릭터 이미지 로드
         topPanel.add(characterImageLabel, BorderLayout.CENTER);
 
+        // 포인트 정보 라벨, 아이템 정보 라벨 등을 새로운 패널에 추가
+        JPanel infoPanel = new JPanel();
+        infoPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
+
         // 포인트 정보 라벨
         pointsLabel = new JLabel("포인트: " + currentUser.getPoints());
-        // pointsLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        topPanel.add(pointsLabel, BorderLayout.NORTH);
+        infoPanel.add(pointsLabel, BorderLayout.NORTH);
 
-        JLabel titleLabel = new JLabel("상점");
-        // titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        topPanel.add(titleLabel, BorderLayout.SOUTH);
+        livesItemLabel = new JLabel("목숨 추가 아이템 개수: " + livesItemCount+ "개");
+        timeItemLabel = new JLabel("시간 추가 아이템 개수: " + timeItemCount+ "개");
+        infoPanel.add(livesItemLabel);
+        infoPanel.add(timeItemLabel);
+
+        topPanel.add(infoPanel, BorderLayout.NORTH);
 
         // 아이템 목록 패널
         JPanel itemPanel = new JPanel();
@@ -63,11 +87,21 @@ public class StoreView extends JPanel {
                 boolean success = storeRepository.purchaseItem(currentUser.getUsername(), item.getItemId());
                 if (success) {
                     JOptionPane.showMessageDialog(StoreView.this, "구매 성공!");
-                    currentUser.setPoints(currentUser.getPoints() - item.getPrice()); // 포인트 차감
-                    updatePointsLabel(); // 포인트 갱신
-                    purchaseButton.setEnabled(false);
+                    currentUser.setPoints(currentUser.getPoints() - item.getPrice());
+                    refreshPointsLabel(); // 포인트 갱신
+
+                    // 아이템 종류에 따라 livesItemCount 또는 timeItemCount 갱신
+                    if ("life".equals(item.getType())) {
+                        livesItemCount++;
+                        livesItemLabel.setText("목숨 추가 아이템 개수: " + livesItemCount);
+                    } else if ("time".equals(item.getType())) {
+                        timeItemCount++;
+                        timeItemLabel.setText("시간 추가 아이템 개수: " + timeItemCount);
+                    }
+
+                    purchaseButton.setEnabled(false); // 구매 후 버튼 비활성화
                     if ("accessory".equals(item.getType())) {
-                        wearButton.setEnabled(true);
+                        wearButton.setEnabled(true); // 악세사리 착용 버튼 활성화
                     }
                 } else {
                     JOptionPane.showMessageDialog(StoreView.this, "구매 실패: 포인트 부족 또는 이미 구매함.");
@@ -94,6 +128,8 @@ public class StoreView extends JPanel {
             itemPanel.add(itemRow);
         }
 
+        System.out.println("상점에서의 점수: " + currentUser.getPoints());
+
         // 하단 패널: 돌아가기 버튼
         JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
         JButton backButton = new JButton("돌아가기");
@@ -114,7 +150,14 @@ public class StoreView extends JPanel {
         }
     }
 
-    private void updatePointsLabel() {
+    private void updateItemCounts() {
+        this.livesItemCount = currentUser.getLifeItem();
+        this.timeItemCount = currentUser.getTimeBoostItem();
+    }
+
+    public void refreshPointsLabel() {
+        // DB에서 최신 포인트 정보를 가져오고 갱신한다...
+        currentUser.setPoints(new UserRepository().getUserPoints(currentUser.getUsername()));
         pointsLabel.setText("포인트: " + currentUser.getPoints());
     }
 

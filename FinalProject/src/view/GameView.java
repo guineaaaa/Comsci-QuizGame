@@ -119,7 +119,7 @@ public class GameView extends JPanel implements ActionListener {
         Quiz currentQuestion = questions.get(currentQuestionIndex);
 
         if (selectedOptionIndex == currentQuestion.getCorrectOption()) {
-            points += 2;
+            points += 40;
             SwingUtilities.invokeLater(() -> pointsLabel.setText("점수: " + points)); // UI 업데이트
             QuizRepository quizRepository = new QuizRepository();
             quizRepository.markQuizAsCompleted(
@@ -138,14 +138,9 @@ public class GameView extends JPanel implements ActionListener {
         }
 
         revalidate();
-        repaint();
-
-     
-           
+        repaint();           
         currentQuestionIndex++;
-        loadQuestion();
-        
-        
+        loadQuestion();      
     }
 
 

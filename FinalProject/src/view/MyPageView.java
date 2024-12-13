@@ -56,6 +56,8 @@ public class MyPageView extends JPanel implements ActionListener {
         startGameButton.addActionListener(this);
         bottomPanel.add(startGameButton);
 
+        
+        System.out.println("마이페이지 에서의 포인트: "+currentUser.getPoints());
         // BorderLayout에 각각 추가
         add(topPanel, BorderLayout.NORTH);  // 상단 패널
         add(centerPanel, BorderLayout.CENTER);  // 중앙 패널
@@ -72,8 +74,11 @@ public class MyPageView extends JPanel implements ActionListener {
 
     // 상점 화면 전환 메서드
     private void showStoreView() {
+    	
         mainPanel.removeAll(); // 기존 패널 제거
-        mainPanel.add(new StoreView(mainPanel, currentUser)); // 상점 패널 추가
+        StoreView storeView=new StoreView(mainPanel, currentUser);
+        storeView.refreshPointsLabel();
+        mainPanel.add(storeView);
         mainPanel.revalidate(); // 레이아웃 갱신
         mainPanel.repaint();
     }
@@ -96,6 +101,10 @@ public class MyPageView extends JPanel implements ActionListener {
         } else if (e.getSource() == startGameButton) {
             startGame(currentUser);
         }
+    }
+    
+    public void updateCurrentUser(User user) {
+    	this.currentUser=user;
     }
     
 }

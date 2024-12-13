@@ -42,6 +42,9 @@ public class GameOverView extends JPanel implements ActionListener {
 
         centerPanel.add(mainMenuButton);
         centerPanel.add(restartButton);
+        
+        // 디버깅
+        System.out.println("게임오버에서의 포인트: "+currentUser.getPoints());
 
         // BorderLayout에 각 패널 추가
         add(topPanel, BorderLayout.NORTH);

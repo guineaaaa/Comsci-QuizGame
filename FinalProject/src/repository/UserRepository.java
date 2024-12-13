@@ -154,7 +154,22 @@ public class UserRepository {
         }
     }
     
+    public int getUserPoints(String username) {
+        Connection conn = DatabaseConfig.getConnection();
+        String query = "SELECT point FROM user WHERE id = ?";
 
+        try (PreparedStatement pstmt = conn.prepareStatement(query)) {
+            pstmt.setString(1, username);
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                return rs.getInt("point"); // 포인트 반환
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0; // 포인트가 없거나 에러가 발생한 경우
+    }
+   
 
 }
 

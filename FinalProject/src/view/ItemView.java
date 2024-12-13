@@ -67,10 +67,13 @@ public class ItemView extends JPanel {
         add(bottomPanel, BorderLayout.SOUTH);
     }
 
+    int useTimeItemCount=0, useLivesItemCount=0; // 클릭될때마다 이 변수가 증가되고, gameview로 전달된다.
+    
     private void useLivesItem() {
         if (livesItemCount > 0) {
-            livesItemCount--;
-            currentUser.setLifeItem(livesItemCount); // 아이템 개수 업데이트
+            livesItemCount--; //실제 DB의 값은 감소시키고,
+            useLivesItemCount++; // 게임에서 진행하면서 사용할 아이템은 증가시킨다.
+            currentUser.setLifeItem(livesItemCount); // 유저 객체에서 아이템 개수 업데이트
             livesItemLabel.setText("목숨 +1 아이템: " + livesItemCount + "개");
             
             // DB 업데이트 
@@ -84,6 +87,7 @@ public class ItemView extends JPanel {
     private void useTimeItem() {
         if (timeItemCount > 0) {
             timeItemCount--;
+            useTimeItemCount++;
             currentUser.setTimeBoostItem(timeItemCount); // 아이템 개수 업데이트
             timeItemLabel.setText("30초 추가 아이템: " + timeItemCount + "개");
             
@@ -103,10 +107,14 @@ public class ItemView extends JPanel {
     
     private void startGame() {
     	System.out.println("게임 시작 카테고리: " + selectedCategory);
-        // QuizRepository를 사용하여 퀴즈 문제를 가져오기
+        System.out.println("게임 시작 카테고리: " + selectedCategory);
+        System.out.println("아이템 개수DB - 목숨: " + livesItemCount + ", 시간: " + timeItemCount);
+        System.out.println("사용자 선택 아이템 - 목숨: "+useLivesItemCount+", 시간: "+useTimeItemCount);
+        
+    	// QuizRepository를 사용하여 퀴즈 문제를 가져오기
         List<Quiz> questions = new QuizRepository().getQuestions(currentUser.getUsername(), selectedCategory);
         mainPanel.removeAll();
-        mainPanel.add(new GameView(mainPanel, questions, currentUser, livesItemCount, timeItemCount));
+        mainPanel.add(new GameView(mainPanel, questions, currentUser, useLivesItemCount, useTimeItemCount));
         mainPanel.revalidate();
         mainPanel.repaint();
     }

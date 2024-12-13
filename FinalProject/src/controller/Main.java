@@ -8,6 +8,5 @@ public class Main {
 		Controller.setIntroView(introView); 
 		introView.setVisible(true);
 	}
-
 }
 

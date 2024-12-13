@@ -5,10 +5,12 @@ import javax.swing.JOptionPane;
 import model.User;
 import repository.UserRepository;
 import view.IntroView;
+import view.MyPageView;
 
 public class Controller {
     private static UserRepository userRepository = new UserRepository();
     private static IntroView introView; // IntroView 인스턴스 저장
+    private static MyPageView myPageView;
 
     public static void setIntroView(IntroView view) {
         introView = view; // IntroView를 설정
@@ -50,4 +52,5 @@ public class Controller {
             JOptionPane.showMessageDialog(null, "로그인 실패");
         }
     }
+
 }

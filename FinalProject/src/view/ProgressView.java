@@ -18,7 +18,6 @@ public class ProgressView extends JPanel {
         progressLabel.setHorizontalAlignment(JLabel.CENTER);
         add(progressLabel, BorderLayout.CENTER);
 	}
-	
-	
+
 
 }
