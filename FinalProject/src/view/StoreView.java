@@ -75,6 +75,7 @@ public class StoreView extends JPanel {
             JButton wearButton = new JButton("착용하기");
 
             wearButton.setEnabled(false); // 기본적으로 비활성화
+            
             if (storeRepository.isItemOwned(currentUser.getUsername(), item.getItemId())) {
                 purchaseButton.setEnabled(false); // 이미 구매한 아이템은 비활성화
                 if ("accessory".equals(item.getType())) {
@@ -99,7 +100,7 @@ public class StoreView extends JPanel {
                         timeItemLabel.setText("시간 추가 아이템 개수: " + timeItemCount);
                     }
 
-                    purchaseButton.setEnabled(false); // 구매 후 버튼 비활성화
+                    // purchaseButton.setEnabled(false); // 구매 후 버튼 비활성화
                     if ("accessory".equals(item.getType())) {
                         wearButton.setEnabled(true); // 악세사리 착용 버튼 활성화
                     }

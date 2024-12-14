@@ -67,7 +67,7 @@ public class MyPageView extends JPanel implements ActionListener {
     // 진행 현황 화면 전환 메서드
     private void showProgressView() {
         mainPanel.removeAll(); // 기존 패널 제거
-        mainPanel.add(new ProgressView(mainPanel)); // 진행 현황 패널 추가
+        mainPanel.add(new ProgressView(mainPanel,currentUser)); // 진행 현황 패널 추가
         mainPanel.revalidate(); // 레이아웃 갱신
         mainPanel.repaint();
     }

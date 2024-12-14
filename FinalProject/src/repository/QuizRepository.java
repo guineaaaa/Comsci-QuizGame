@@ -3,6 +3,7 @@ package repository;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.ArrayList;
 import java.util.List;
@@ -82,6 +83,26 @@ public class QuizRepository {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+    
+    // user quiz 퀴즈 갯수 세기
+    public int getCountUserQuiz(String userId) {
+    	Connection conn=DatabaseConfig.getConnection();
+    	String query="""
+    			SELECT COUNT(*) AS total_count
+    			FROM user_quiz
+    			WHERE userId=?;
+    			""";
+    	try(PreparedStatement pstmt=conn.prepareStatement(query)){
+    		pstmt.setString(1, userId);
+    		ResultSet rs=pstmt.executeQuery();
+    		if(rs.next()) {
+    			return rs.getInt("total_count");
+    		}
+    	}catch(SQLException e) {
+    		e.printStackTrace();
+    	}
+    	return 0; // 사용자가 푼 문제가 없는 경우
     }
 
 
