@@ -51,6 +51,7 @@ public class UserRepository {
 		}
 	}
     
+    // 사용자 별명을 가져온다.
     public String getUserNickname(String username) {
     	Connection conn = DatabaseConfig.getConnection();
         String query = "SELECT nickname FROM user WHERE id = ?";
@@ -85,18 +86,18 @@ public class UserRepository {
         }
     }
     
-    // 현재 로그인된 사용자 
+    // 현재 로그인된 사용자 정보를 가져오는 로직
     public User getCurrentUser(String username) {
         Connection conn = DatabaseConfig.getConnection();
         String query = "SELECT id, password, nickname, point, character_image, time_boost_item, life_item FROM user WHERE id=?";
 
         try {
             PreparedStatement pstmt = conn.prepareStatement(query);
-            pstmt.setString(1, username);  // You are passing the username as the 'id' in your query.
+            pstmt.setString(1, username);  
             ResultSet rs = pstmt.executeQuery();
 
             if (rs.next()) {
-                String id = rs.getString("id"); // id는 문자열로 가져옵니다.
+                String id = rs.getString("id"); 
                 String password = rs.getString("password");
                 String nickname = rs.getString("nickname");
                 int points = rs.getInt("point");
@@ -118,7 +119,7 @@ public class UserRepository {
         return null; 
     }
 
-    
+    // 사용자 포인트 업데이트
     public void updateUserPoints(String username, int addedPoints) {
         String query = "UPDATE user SET point = point + ? WHERE id = ?";
         
@@ -139,6 +140,7 @@ public class UserRepository {
         }
     }
     
+    // 선택한 만큼의 아이템 개수 업데이트
     public void updateItemCount(String userId, int livesItem, int timeBoostItem) {
         String query = "UPDATE user SET life_item = ?, time_boost_item = ? WHERE id = ?";
 
@@ -154,6 +156,7 @@ public class UserRepository {
         }
     }
     
+    // 사용자 포인트를 가져온다.
     public int getUserPoints(String username) {
         Connection conn = DatabaseConfig.getConnection();
         String query = "SELECT point FROM user WHERE id = ?";

@@ -20,13 +20,17 @@ public class QuizRepository {
         String query = """
                 SELECT q.quizId, q.title, q.option1, q.option2, q.option3, q.correct_option, q.categoryId
                 FROM quiz q
+                
                 LEFT JOIN user_quiz uq ON q.quizId = uq.quizId AND uq.userId = ?
+                
                 WHERE uq.quizId IS NULL AND q.categoryId = (
                     SELECT categoryId FROM category WHERE name = ?
                 )
+                
                 ORDER BY RAND()
                 LIMIT 10;
             """;
+        
         System.out.println("카테고리: " + categoryName + "에 해당하는 퀴즈 문제를 가져오는 중");
         
         System.out.println("getQuestions 호출: userId=" + userId + ", categoryName=" + categoryName);
@@ -85,7 +89,7 @@ public class QuizRepository {
         }
     }
     
-    // user quiz 퀴즈 갯수 세기
+    // 사용자가 푼 퀴즈 갯수 세기
     public int getCountUserQuiz(String userId) {
     	Connection conn=DatabaseConfig.getConnection();
     	String query="""

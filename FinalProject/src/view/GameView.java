@@ -24,6 +24,7 @@ public class GameView extends JPanel implements ActionListener {
     private JPanel mainPanel;
     private List<Quiz> questions;
     private int currentQuestionIndex = 0;
+    
     private int lives = 5; 
     private int points = 0;
     private int totalTime = 10 * 60; // 10분

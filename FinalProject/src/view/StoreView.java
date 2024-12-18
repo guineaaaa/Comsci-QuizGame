@@ -20,9 +20,10 @@ import repository.StoreRepository;
 import repository.UserRepository;
 
 public class StoreView extends JPanel {
-    private final StoreRepository storeRepository;
-    private final User currentUser;
-    private final JPanel mainPanel;
+    private static StoreRepository storeRepository;
+    private static User currentUser;
+    private static JPanel mainPanel;
+    
     private JLabel characterImageLabel;
     private JLabel pointsLabel;
     private JLabel livesItemLabel, timeItemLabel;
@@ -95,12 +96,10 @@ public class StoreView extends JPanel {
                     if ("life".equals(item.getType())) {
                         livesItemCount++;
                         livesItemLabel.setText("목숨 추가 아이템 개수: " + livesItemCount);
-                    } else if ("time".equals(item.getType())) {
+                    } else if ("time_boost".equals(item.getType())) {
                         timeItemCount++;
                         timeItemLabel.setText("시간 추가 아이템 개수: " + timeItemCount);
                     }
-
-                    // purchaseButton.setEnabled(false); // 구매 후 버튼 비활성화
                     if ("accessory".equals(item.getType())) {
                         wearButton.setEnabled(true); // 악세사리 착용 버튼 활성화
                     }

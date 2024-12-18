@@ -23,8 +23,10 @@ public class ProgressView extends JPanel implements ActionListener{
 	private JButton backButton;
 	
 	public ProgressView(JPanel mainPanel, User currentUser) {
-		this.mainPanel=mainPanel;
+		this.mainPanel=mainPanel; //생성자 매개변수로 받은 값을 클래스 내부 멤버 변수에 저장
 		this.currentUser=currentUser;
+		// View가 생성될 때, 데이터를 바로 가져와야 하기때문에 생성자에서 레포지토리를 초기화해야 한다.
+		// View가 생성되자마자 실행되어야 하기 때문 이다.
 		quizRepository=new QuizRepository();
 		storeRepository=new StoreRepository();
 		
