@@ -1,3 +1,14 @@
-# Comsci-QuizGame
-![image](https://github.com/user-attachments/assets/781ff55d-7f47-414b-8d5f-e0055bb68db7)
+# 🖥️ Comsci-QuizGame 컴퓨터 과학 지식 퀴즈 게임
+### ERD
 ![image](https://github.com/user-attachments/assets/9102f2ac-c397-4fcb-aa5f-0103223ae296)
+
+### FlowChart
+![image](https://github.com/user-attachments/assets/781ff55d-7f47-414b-8d5f-e0055bb68db7)
+
+### 프로젝트 설명
+대학교에 입학하기 전에는 컴퓨터 과학에 대한 지식이 전무했던 학생 이었어서 전공과목을 학습하는데 있어 용어와 개념들이 생소하고 어렵게 다가왔고, 학습하는 데 있어 많은 시간을 쏟았어야 했습니다. <br>
+따라서 전공과목 공부를 보다 효과적으로 익히고 반복할 수 있는 방법에 대해 고민하였고,<br> 이에 전공 지식을 시각적으로 성취하는 방식이 학습 효과를 높이는 데 기여할 수 있을 것이라 판단하여 CS 지식을 기반으로 한 퀴즈 게임 Quiz&Conquer를 기힉하게 되었습니다.<br>
+
+상점에서 게임 아이템 (시간 30초 추가, 목숨 아이템, 악세서리 아이템 적용)을구매할 수 있으며,<br>
+게임은 총 4개의 카테고리 프론트엔드, 백엔드, 자료구조, 운영체제 중 하나를 선택해 퀴즈 게임을 진행할 수 있습니다.<br>
+한번 사용자가 푸는데 성공한 퀴즈는 user_quiz 테이블에 추적되어 다시 표시되지 않습니다.
