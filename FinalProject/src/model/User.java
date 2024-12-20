@@ -1,6 +1,9 @@
 package model;
 
 // DB와 매핑되는 User 객체
+/**
+ * 데이터를 캡슐화, 데이터와 프로그램 로직을 분리한다.
+ */
 public class User {
     private String username;
     private String password;

@@ -20,9 +20,12 @@ import repository.StoreRepository;
 import repository.UserRepository;
 
 public class StoreView extends JPanel {
-    private static StoreRepository storeRepository;
-    private static User currentUser;
-    private static JPanel mainPanel;
+	// 객체 상태 정의하기
+	// 필드들을 선언함으로써 같은 상태를 다른 메서드들에서 접근, 수정 가능해
+	// 상태 전달이 가능하다.
+    private StoreRepository storeRepository;
+    private User currentUser;
+    private JPanel mainPanel;
     
     private JLabel characterImageLabel;
     private JLabel pointsLabel;
@@ -32,6 +35,7 @@ public class StoreView extends JPanel {
     private int timeItemCount;  // 30초 추가 아이템 개수
 
     public StoreView(JPanel mainPanel, User currentUser) {
+    	// 생성자에서 값 할당
         this.mainPanel = mainPanel;
         this.currentUser = currentUser;
         this.storeRepository = new StoreRepository();
@@ -155,16 +159,16 @@ public class StoreView extends JPanel {
         this.timeItemCount = currentUser.getTimeBoostItem();
     }
 
-    public void refreshPointsLabel() {
-        // DB에서 최신 포인트 정보를 가져오고 갱신한다...
-        currentUser.setPoints(new UserRepository().getUserPoints(currentUser.getUsername()));
-        pointsLabel.setText("포인트: " + currentUser.getPoints());
-    }
-
     private void showMyPageView() {
         mainPanel.removeAll();
         mainPanel.add(new MyPageView(currentUser, mainPanel));
         mainPanel.revalidate();
         mainPanel.repaint();
     }
+    public void refreshPointsLabel() {
+        // DB에서 최신 포인트 정보를 가져오고 갱신한다...
+        currentUser.setPoints(new UserRepository().getUserPoints(currentUser.getUsername()));
+        pointsLabel.setText("포인트: " + currentUser.getPoints());
+    }
+
 }

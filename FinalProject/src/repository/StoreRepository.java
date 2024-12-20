@@ -45,7 +45,7 @@ public class StoreRepository {
         String updatePointQuery = "UPDATE user SET point = point - ? WHERE id = ?"; // 유저의 포인트를 차감하는 쿼리
         String updateTimeBoostQuery = "UPDATE user SET time_boost_item = time_boost_item + 1 WHERE id = ?"; // time_boost 아이템 수를 증가
         String updateLifeItemQuery = "UPDATE user SET life_item = life_item + 1 WHERE id = ?"; // life item 수를 증가하는 쿼리
-        String insertUserItemQuery = "INSERT INTO user_item (userId, itemId) VALUES (?, ?)"; // 유저 아이템 테이블에 유저와 아이템 관계를 추가하는 쿼리
+        String insertUserItemQuery = "INSERT INTO user_item (userId, itemId) VALUES (?, ?)"; // 유저 아이템 테이블에 유저와 악세서리 아이템 관계를 추가하는 쿼리
 
         try (Connection conn = DatabaseConfig.getConnection()) { // DB 연결 생성
             conn.setAutoCommit(false);

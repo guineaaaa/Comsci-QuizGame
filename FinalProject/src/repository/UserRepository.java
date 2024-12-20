@@ -107,7 +107,7 @@ public class UserRepository {
                     characterImage = "/images/character.png";
                 }
 
-                // time_boost_item과 life_item을 추가로 처리합니다.
+                // time_boost_item과 life_item을 추가로 처리한다
                 int timeBoostItem = rs.getInt("time_boost_item");
                 int lifeItem = rs.getInt("life_item");
 

@@ -8,9 +8,7 @@ public class Quiz {
     private String option2;
     private String option3;
     private int correctOption;
-    private String difficulty; // 추가된 난이도 필드
-
-    // Getters and Setters
+    
     public int getQuizId() {
         return quizId;
     }
@@ -66,23 +64,14 @@ public class Quiz {
     public void setCorrectOption(int correctOption) {
         this.correctOption = correctOption;
     }
-
-    // 난이도에 대한 getter, setter 추가
-    public String getDifficulty() {
-        return difficulty;
-    }
-
-    public void setDifficulty(String difficulty) {
-        this.difficulty = difficulty;
-    }
-
-    // 정답을 반환하는 메서드 수정
+    
+    // 정답을 반환하는 메서드 
     public int getAnswer() {
-        return correctOption; // 정답은 'correctOption'과 동일
+        return correctOption; 
     }
 
-    // 제목을 반환하는 메서드 수정 (quizId 대신 제목을 반환)
+    // 제목을 반환하는 메서드
     public String getTitle() {
-        return questionText; // 퀴즈의 질문 텍스트를 제목으로 사용
+        return questionText; 
     }
 }

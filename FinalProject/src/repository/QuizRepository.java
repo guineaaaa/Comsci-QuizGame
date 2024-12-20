@@ -18,18 +18,17 @@ public class QuizRepository {
         List<Quiz> questions = new ArrayList<>();
         
         String query = """
-                SELECT q.quizId, q.title, q.option1, q.option2, q.option3, q.correct_option, q.categoryId
-                FROM quiz q
-                
-                LEFT JOIN user_quiz uq ON q.quizId = uq.quizId AND uq.userId = ?
-                
-                WHERE uq.quizId IS NULL AND q.categoryId = (
-                    SELECT categoryId FROM category WHERE name = ?
-                )
-                
-                ORDER BY RAND()
-                LIMIT 10;
-            """;
+			SELECT q.quizId, q.title, q.option1, q.option2, q.option3, q.correct_option, q.categoryId
+			FROM quiz q
+			
+			LEFT JOIN user_quiz uq ON q.quizId = uq.quizId AND uq.userId = ?
+			INNER JOIN category c ON q.categoryId = c.categoryId
+			WHERE uq.quizId IS NULL AND c.name = ?
+			ORDER BY RAND()
+			LIMIT 10;
+            """; 
+        	// 사용자가 아직 풀지 않았고, (uq에서 quizId null) 선택한 카테고리에 매핑되는 문제를 가져온다.
+        	// 특정 카테고리에 속한 퀴즈만 선택하기 위해 추가된 조건 
         
         System.out.println("카테고리: " + categoryName + "에 해당하는 퀴즈 문제를 가져오는 중");
         

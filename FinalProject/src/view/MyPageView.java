@@ -74,7 +74,6 @@ public class MyPageView extends JPanel implements ActionListener {
 
     // 상점 화면 전환 메서드
     private void showStoreView() {
-    	
         mainPanel.removeAll(); // 기존 패널 제거
         StoreView storeView=new StoreView(mainPanel, currentUser);
         storeView.refreshPointsLabel();
@@ -103,8 +102,9 @@ public class MyPageView extends JPanel implements ActionListener {
         }
     }
     
+    /*
     public void updateCurrentUser(User user) {
     	this.currentUser=user;
     }
-    
+    */
 }
